@@ -30,6 +30,27 @@ public class RegistrationTest {
         }
     }
     @Test
+    public void testRegistrationFormValid() throws InterruptedException {
+        webDriver.get(baseUrl);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[1]")).sendKeys("test10@stu.ibu.edu.ba");
+        sleep(2000);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[2]")).sendKeys("$u2TRtvvCP22SA");
+        sleep(2000);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[3]")).sendKeys("Ilma");
+        sleep(2000);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[4]")).sendKeys("Hodzic");
+        sleep(2000);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[3]/button")).click();
+        sleep(10000);
+        WebElement verifyEmailMessage = webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[3]/div/div/div/div[1]"));
+        sleep(2000);
+        boolean isMessageDisplayed = verifyEmailMessage.isDisplayed();
+        String messageText = verifyEmailMessage.getText();
+
+        assertTrue(isMessageDisplayed, "The 'Please verify your email' message is not displayed.");
+        assertTrue(messageText.contains("Please verify your email"), "The displayed message does not contain the expected text.");
+    }
+    @Test
     public void testRegistrationFormInvalid() throws InterruptedException {
         webDriver.get(baseUrl);
         webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[1]")).sendKeys("test@stu.ibu.edu.ba");
@@ -69,11 +90,10 @@ public class RegistrationTest {
         assertTrue(isMessageDisplayed, "The 'Looks like you already have a user. Did you try logging in?' message is not displayed.");
         assertTrue(messageText.contains("Looks like you already have a user. Did you try logging in?"), "The displayed message does not contain the expected text.");
     }
-
     @Test
-    public void testRegistrationFormValid() throws InterruptedException {
+    public void testRegistrationFormInvalidEmailFormat() throws InterruptedException {
         webDriver.get(baseUrl);
-        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[1]")).sendKeys("test10@stu.ibu.edu.ba");
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[1]")).sendKeys("invalidEmailFormat");
         sleep(2000);
         webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[2]")).sendKeys("$u2TRtvvCP22SA");
         sleep(2000);
@@ -82,13 +102,36 @@ public class RegistrationTest {
         webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[4]")).sendKeys("Hodzic");
         sleep(2000);
         webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[3]/button")).click();
-        sleep(10000);
-        WebElement verifyEmailMessage = webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[3]/div/div/div/div[1]"));
         sleep(2000);
-        boolean isMessageDisplayed = verifyEmailMessage.isDisplayed();
-        String messageText = verifyEmailMessage.getText();
+        WebElement errorMessage = webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[2]"));
+        sleep(2000);
 
-        assertTrue(isMessageDisplayed, "The 'Please verify your email' message is not displayed.");
-        assertTrue(messageText.contains("Please verify your email"), "The displayed message does not contain the expected text.");
+        boolean isMessageDisplayed = errorMessage.isDisplayed();
+        String messageText = errorMessage.getText();
+
+        assertTrue(isMessageDisplayed, "The 'Please enter a valid email address' message is not displayed.");
+        assertTrue(messageText.contains("Please enter a valid email address"), "The displayed message does not contain the expected text.");
+    }
+    @Test
+    public void testRegistrationFormInvalidPasswordFormat() throws InterruptedException {
+        webDriver.get(baseUrl);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[1]")).sendKeys("test@gmail.com");
+        sleep(2000);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[2]")).sendKeys("test");
+        sleep(2000);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[3]")).sendKeys("Ilma");
+        sleep(2000);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[4]")).sendKeys("Hodzic");
+        sleep(2000);
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[3]/button")).click();
+        sleep(2000);
+        WebElement errorMessage = webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[2]"));
+        sleep(2000);
+
+        boolean isMessageDisplayed = errorMessage.isDisplayed();
+        String messageText = errorMessage.getText();
+
+        assertTrue(isMessageDisplayed, "The 'Password requires at least one uppercase character' message is not displayed.");
+        assertTrue(messageText.contains("Password requires at least one uppercase character"), "The displayed message does not contain the expected text.");
     }
 }

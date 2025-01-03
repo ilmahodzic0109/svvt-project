@@ -10,7 +10,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 
 public class FormSubmission {
@@ -99,5 +103,52 @@ public class FormSubmission {
     private void submitForm() throws InterruptedException {
         webDriver.findElement(By.xpath("//*[@id='self-service-submit-btn']")).click();
         Thread.sleep(10000);
+    }
+    @Test
+    public void testFormSubmissionWithEmptyFields() throws InterruptedException {
+        webDriver.get(baseUrl);
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        WebElement nextButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("self-service-to-step-2-btn")));
+        nextButton.click();
+        Thread.sleep(1000);
+
+        WebElement nameError = webDriver.findElement(By.xpath("//*[@id='basic-info-form']/div[4]"));
+        Assertions.assertTrue(nameError.getText().contains("Field \"Name\" is required"), "Name field error message is not displayed");
+    }
+    @Test
+    public void testFormSubmissionWithInvalidEmail() throws InterruptedException {
+        webDriver.get(baseUrl);
+        fillUserDetails("Test User", "invalidemail", "Bosnia and Herzegovina", "Test Organization");
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        WebElement nextButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("self-service-to-step-2-btn")));
+        nextButton.click();
+        Thread.sleep(1000);
+        WebElement emailError = webDriver.findElement(By.xpath("//*[@id='basic-info-form']/div[4]"));
+        Assertions.assertTrue(emailError.getText().contains("Field \"Email\" must be a valid email"),
+                "Email format error message is not displayed");
+    }
+    @Test
+    public void testFormSubmissionWithInvalidName() throws InterruptedException {
+        webDriver.get(baseUrl);
+        fillUserDetails("Test", "test@gmail.com", "Bosnia and Herzegovina", "Test Organization");
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        WebElement nextButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("self-service-to-step-2-btn")));
+        nextButton.click();
+        Thread.sleep(1000);
+        WebElement emailError = webDriver.findElement(By.xpath("//*[@id='basic-info-form']/div[4]"));
+        Assertions.assertTrue(emailError.getText().contains("Field \"Name\" should contain both given name and family name"),
+                "Name format error message is not displayed");
+    }
+    @Test
+    public void testFormSubmissionWithInvalidCountry() throws InterruptedException {
+        webDriver.get(baseUrl);
+        fillUserDetails("Test User", "test@gmail.com", "Bosnia and Herzegovina", "");
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        WebElement nextButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("self-service-to-step-2-btn")));
+        nextButton.click();
+        Thread.sleep(1000);
+        WebElement emailError = webDriver.findElement(By.xpath("//*[@id='basic-info-form']/div[4]"));
+        Assertions.assertTrue(emailError.getText().contains("Field \"Organization\" is required"),
+                "Email format error message is not displayed");
     }
 }

@@ -35,7 +35,7 @@ public class FilterTest {
     }
 
     @Test
-    public void testCompleteFilterFlow() throws InterruptedException {
+    public void testValidSearch() throws InterruptedException {
         webDriver.get(baseUrl);
         Thread.sleep(2000);
 
@@ -49,6 +49,20 @@ public class FilterTest {
 
         WebElement tutorialHeader = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"tutorials_html_css_links_list\"]/h3")));
         Assertions.assertTrue(tutorialHeader.getText().contains("HTML and CSS"), "Header should contain 'HTML and CSS' after typing 'html'.");
+    }
+    @Test
+    public void testClearButtonFunctionality() throws InterruptedException {
+        webDriver.get(baseUrl);
+        Thread.sleep(2000);
+
+        WebElement filterButton = webDriver.findElement(By.xpath("//*[@id='navbtn_tutorials']"));
+        filterButton.click();
+        Thread.sleep(2000);
+
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        WebElement filterInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='filter-tutorials-input']")));
+        filterInput.sendKeys("html");
+        Thread.sleep(2000);
 
         WebElement clearButton = webDriver.findElement(By.xpath("//*[@id='tutorials_list']/div[1]/div[2]/div/div"));
         clearButton.click();
@@ -56,12 +70,77 @@ public class FilterTest {
         Assertions.assertTrue(tutorialButton.isEnabled(), "The button should be clickable.");
         Thread.sleep(2000);
         Assertions.assertEquals("", filterInput.getAttribute("value"), "The filter input should be cleared after clicking the clear button.");
+    }
+    @Test
+    public void testFilterResetToAllTutorials() throws InterruptedException {
+        webDriver.get(baseUrl);
+        Thread.sleep(2000);
 
+        WebElement filterButton = webDriver.findElement(By.xpath("//*[@id='navbtn_tutorials']"));
+        filterButton.click();
+        Thread.sleep(2000);
+
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        WebElement filterInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='filter-tutorials-input']")));
+        filterInput.sendKeys("html");
+        Thread.sleep(2000);
+
+        WebElement clearButton = webDriver.findElement(By.xpath("//*[@id='tutorials_list']/div[1]/div[2]/div/div"));
+        clearButton.click();
+        Thread.sleep(2000);
+
+        WebElement firstTutorial = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='tutorials_html_css_links_list']/h3")));
+        Assertions.assertTrue(firstTutorial.isDisplayed(), "Tutorials should be visible after clearing the filter.");
+    }
+
+    @Test
+    public void testSearchWithNoMatch() throws InterruptedException {
+        webDriver.get(baseUrl);
+        Thread.sleep(2000);
+
+        WebElement filterButton = webDriver.findElement(By.xpath("//*[@id='navbtn_tutorials']"));
+        filterButton.click();
+        Thread.sleep(2000);
+
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        WebElement filterInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='filter-tutorials-input']")));
         filterInput.sendKeys("ilma");
         Thread.sleep(2000);
 
         WebElement noMatchMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='no-match']")));
         Assertions.assertTrue(noMatchMessage.isDisplayed(), "The 'No match found' message should be visible when typing 'ilma'.");
+    }
+    @Test
+    public void testSearchWithSpecialCharacters() throws InterruptedException {
+        webDriver.get(baseUrl);
+        Thread.sleep(2000);
 
+        WebElement filterButton = webDriver.findElement(By.xpath("//*[@id='navbtn_tutorials']"));
+        filterButton.click();
+        Thread.sleep(2000);
+
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        WebElement filterInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='filter-tutorials-input']")));
+        filterInput.sendKeys("!@#$");
+        Thread.sleep(2000);
+
+        WebElement noMatchMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='no-match']")));
+        Assertions.assertTrue(noMatchMessage.isDisplayed(), "The 'No match found' message should be visible when typing '!@#$'.");
+    }
+    @Test
+    public void testFilterInputDisabledOnError() throws InterruptedException {
+        webDriver.get(baseUrl);
+        Thread.sleep(2000);
+
+        WebElement filterButton = webDriver.findElement(By.xpath("//*[@id='navbtn_tutorials']"));
+        filterButton.click();
+        Thread.sleep(2000);
+
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        WebElement filterInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='filter-tutorials-input']")));
+        filterInput.sendKeys("invalid term");
+        Thread.sleep(2000);
+
+        Assertions.assertTrue(filterInput.isEnabled(), "Filter input field should be enabled even if there's an error.");
     }
 }
