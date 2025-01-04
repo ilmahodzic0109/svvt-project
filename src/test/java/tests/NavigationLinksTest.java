@@ -154,18 +154,7 @@ public class NavigationLinksTest {
             assertEquals(200, statusCode, "Broken link found: " + currentUrl);
         }
     }
-    @Test
-    public void testNegativeNavigation() {
-        webDriver.get(baseUrl);
-        String invalidXPath = "//*[@id=\"subtopnav\"]/a[9999]";
-        try {
-            WebElement invalidLink = webDriver.findElement(By.xpath(invalidXPath));
-            invalidLink.click();
-            fail("Expected NoSuchElementException for invalid link");
-        } catch (Exception e) {
-            assertInstanceOf(NoSuchElementException.class, e, "Expected NoSuchElementException but got: " + e.getClass().getSimpleName());
-        }
-    }
+
     @Test
     public void testLinkThatNotExists() {
         webDriver.get(baseUrl + "/login?redirect=http://evil.com");

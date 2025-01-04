@@ -32,7 +32,7 @@ public class RegistrationTest {
     @Test
     public void testRegistrationFormValid() throws InterruptedException {
         webDriver.get(baseUrl);
-        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[1]")).sendKeys("test10@stu.ibu.edu.ba");
+        webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[1]")).sendKeys("test123@stu.ibu.edu.ba");
         sleep(2000);
         webDriver.findElement(By.xpath("//*[@id=\"root\"]/div[2]/div/div[1]/div/div[2]/div/div[5]/div/form/div[1]/input[2]")).sendKeys("$u2TRtvvCP22SA");
         sleep(2000);
