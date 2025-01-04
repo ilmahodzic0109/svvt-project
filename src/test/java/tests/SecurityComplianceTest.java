@@ -30,11 +30,13 @@ public class SecurityComplianceTest {
     }
 
     @Test
-    public void testHttpsEnforcement() {
-        webDriver.get(baseUrl);
+    public void testEnforcesHttps() {
+        String httpUrl = "http://www.w3schools.com";
+        webDriver.get(httpUrl);
         String currentUrl = webDriver.getCurrentUrl();
-        assertTrue(currentUrl.startsWith("https://"), "The website should enforce HTTPS.");
+        assertTrue(currentUrl.startsWith("https://"), "The website should enforce HTTPS and redirect from HTTP.");
     }
+
 
     @Test
     public void testSqlInjection() throws InterruptedException {
