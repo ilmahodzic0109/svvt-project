@@ -6,10 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PerformanceAndLoadTest {

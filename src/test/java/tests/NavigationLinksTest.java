@@ -1,6 +1,6 @@
 package tests;
 
-import org.junit.Assert;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -166,6 +166,19 @@ public class NavigationLinksTest {
             assertInstanceOf(NoSuchElementException.class, e, "Expected NoSuchElementException but got: " + e.getClass().getSimpleName());
         }
     }
+    @Test
+    public void testLinkThatNotExists() {
+        webDriver.get(baseUrl + "/login?redirect=http://evil.com");
+        String currentUrl = webDriver.getCurrentUrl();
+        assertTrue(currentUrl.startsWith(baseUrl));
+        try {
+            WebElement errorMessage = webDriver.findElement(By.xpath("/html/body/div[2]/div[1]/h2"));
+            assertTrue(errorMessage.isDisplayed(), "Error message 'Sorry!' should appear.");
+        } catch (NoSuchElementException e) {
+            fail("Error message 'Sorry!' was not found.");
+        }
+    }
+
     private int getHttpResponseCode(String url) {
         try {
             HttpClient client = HttpClient.newHttpClient();
