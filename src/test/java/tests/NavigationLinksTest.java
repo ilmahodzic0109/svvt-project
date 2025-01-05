@@ -1,12 +1,10 @@
 package tests;
 
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -17,8 +15,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NavigationLinksTest {
     private static WebDriver webDriver;
@@ -39,7 +36,6 @@ public class NavigationLinksTest {
             webDriver.quit();
         }
     }
-
     @Test
     public void testSequentialNavigationLinks() {
         webDriver.get(baseUrl);
@@ -75,6 +71,65 @@ public class NavigationLinksTest {
             assertTrue(pageTitle.contains(expectedTitle), "Expected title not found. Current title: " + pageTitle);
         }
     }
+    @Test
+    public void testScrollButtonFunctionality() {
+        webDriver.get(baseUrl);
+
+        WebDriverWait wait = new WebDriverWait(webDriver, java.time.Duration.ofSeconds(10));
+        WebElement scrollButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"scroll_right_btn\"]/span")));
+
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) webDriver;
+        jsExecutor.executeScript("arguments[0].scrollIntoView(true);", scrollButton);
+
+        jsExecutor.executeScript("scrollmenow(1);");
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void testTeacherNavigation() throws InterruptedException {
+        webDriver.get(baseUrl);
+
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(15));
+        WebElement button = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='pagetop']/div[3]/a[7]")));
+        button.click();
+        wait.until(ExpectedConditions.urlToBe("https://www.w3schools.com/academy/teachers/index.php"));
+        assertEquals(webDriver.getCurrentUrl(), "https://www.w3schools.com/academy/teachers/index.php");
+        Thread.sleep(2000);
+    }
+    @Test
+    public void testSpaceNavigation() throws InterruptedException {
+        webDriver.get(baseUrl);
+
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(15));
+        WebElement button = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"pagetop\"]/div[3]/a[6]")));
+        button.click();
+        wait.until(ExpectedConditions.urlToBe("https://www.w3schools.com/spaces/index.php"));
+        assertEquals(webDriver.getCurrentUrl(), "https://www.w3schools.com/spaces/index.php");
+        Thread.sleep(2000);
+    }
+    @Test
+    public void testCampusNavigation() throws InterruptedException {
+        webDriver.get(baseUrl);
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(15));
+        WebElement button = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"pagetop\"]/div[3]/a[5]")));
+        button.click();
+        String originalWindow = webDriver.getWindowHandle();
+        for (String windowHandle : webDriver.getWindowHandles()) {
+            if (!windowHandle.equals(originalWindow)) {
+                webDriver.switchTo().window(windowHandle);
+                break;
+            }
+        }
+        wait.until(ExpectedConditions.urlToBe("https://campus.w3schools.com/collections/course-catalog"));
+        assertEquals(webDriver.getCurrentUrl(), "https://campus.w3schools.com/collections/course-catalog");
+        Thread.sleep(2000);
+        webDriver.close();
+        webDriver.switchTo().window(originalWindow);
+    }
 
     @Test
     public void testForBrokenLinks() {
@@ -100,6 +155,19 @@ public class NavigationLinksTest {
         }
     }
 
+    @Test
+    public void testLinkThatNotExists() {
+        webDriver.get(baseUrl + "/login?redirect=http://evil.com");
+        String currentUrl = webDriver.getCurrentUrl();
+        assertTrue(currentUrl.startsWith(baseUrl));
+        try {
+            WebElement errorMessage = webDriver.findElement(By.xpath("/html/body/div[2]/div[1]/h2"));
+            assertTrue(errorMessage.isDisplayed(), "Error message 'Sorry!' should appear.");
+        } catch (NoSuchElementException e) {
+            fail("Error message 'Sorry!' was not found.");
+        }
+    }
+
     private int getHttpResponseCode(String url) {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -114,26 +182,6 @@ public class NavigationLinksTest {
             e.printStackTrace();
             return -1;
         }
-    }
-
-
-    @Test
-    public void testScrollButtonFunctionality() {
-        webDriver.get(baseUrl);
-
-        WebDriverWait wait = new WebDriverWait(webDriver, java.time.Duration.ofSeconds(10));
-        WebElement scrollButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"scroll_right_btn\"]/span")));
-
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) webDriver;
-        jsExecutor.executeScript("arguments[0].scrollIntoView(true);", scrollButton);
-
-            jsExecutor.executeScript("scrollmenow(1);");
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
     }
 }
 
