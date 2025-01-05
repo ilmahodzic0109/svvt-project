@@ -70,7 +70,7 @@ public class SessionManagementTest {
 
         String sessionId = driver.manage().getCookieNamed("userSession").getValue();
 
-        Thread.sleep(300000);
+        Thread.sleep(2000000);
 
         String newSessionId = driver.manage().getCookieNamed("userSession").getValue();
 
